@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 
 	i2c "github.com/d2r2/go-i2c"
 	logger "github.com/d2r2/go-logger"
@@ -14,25 +13,14 @@ var lg = logger.NewPackageLogger("main",
 	logger.InfoLevel,
 )
 
-func usageExit() {
-	fmt.Println("hello")
-	os.Exit(0)
-}
-
 func main() {
-	flag.Usage = func() { usageExit() }
+	var device = flag.Int("d", 1, "I2C device")
+	var address = flag.Int("a", 0x44, "I2C address")
+	var location = flag.String("l", "rpi", "Sensor location")
 	flag.Parse()
-	args := flag.Args()
-
-	var address uint8 = 0x44
-	var device int = 1
-
-	if len(args) > 0 {
-		address = 0x45
-	}
 
 	defer logger.FinalizeLogger()
-	i2c, err := i2c.NewI2C(address, device)
+	i2c, err := i2c.NewI2C(uint8(*address), *device)
 	if err != nil {
 		lg.Fatal(err)
 	}
@@ -48,6 +36,6 @@ func main() {
 		lg.Fatal(err)
 	}
 
-	fmt.Printf("weather,location=rpi,type=sht31,sid=%x temperature=%v\n", address, temp)
-	fmt.Printf("weather,location=rpi,type=sht31,sid=%x humidity=%v\n", address, rh)
+	fmt.Printf("weather,location=%s,type=sht31,sid=%x temperature=%v\n", *location, *address, temp)
+	fmt.Printf("weather,location=%s,type=sht31,sid=%x humidity=%v\n", *location, *address, rh)
 }
