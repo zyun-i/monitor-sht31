@@ -16,7 +16,6 @@ var lg = logger.NewPackageLogger("main",
 func main() {
 	var device = flag.Int("d", 1, "I2C device")
 	var address = flag.Int("a", 0x44, "I2C address")
-	var location = flag.String("l", "rpi", "Sensor location")
 	flag.Parse()
 
 	defer logger.FinalizeLogger()
@@ -36,6 +35,6 @@ func main() {
 		lg.Fatal(err)
 	}
 
-	fmt.Printf("weather,location=%s,type=sht31,sid=%x temperature=%v\n", *location, *address, temp)
-	fmt.Printf("weather,location=%s,type=sht31,sid=%x humidity=%v\n", *location, *address, rh)
+	fmt.Printf("sensor_sht31_temperature{address=\"%x\"} %v\n", *address, temp)
+	fmt.Printf("sensor_sht31_humidity{address=\"%x\"} %v\n", *address, rh)
 }
